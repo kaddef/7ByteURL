@@ -1,25 +1,36 @@
-import { Input, Button, Box, Heading, InputGroup, Text, Link, HStack, VStack, Stack, IconButton } from "@chakra-ui/react"
+import { useToast, Input, Button, Box, Text, Link, HStack, VStack } from "@chakra-ui/react"
 import { ExternalLinkIcon, LinkIcon } from '@chakra-ui/icons'
 import axios from "axios";
 import { useEffect, useState } from 'react';
 import ShortenedURLInfo from "./ShortenedURLInfo";
 
 function URLShortenerFrom () {
+    const toast = useToast()
     const [destination, setDestination] = useState("");
     const [shortURLData, setShortURLData] = useState({});
     const [isURLShortened, setIsURLShortened] = useState(false);
 
     async function submitHandler(e) {
         e.preventDefault();
-        const result = await axios
-        .post(`http://localhost:4000/api/url`, {
-            destination
-        })
-        .then((response) => response.data)
-        setShortURLData(result)
-        setIsURLShortened(true)
-        localStorage.setItem("shortURLData",JSON.stringify(result))
-        console.log(result)
+        try {
+            const result = await axios.post(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/url`, {
+                destination
+            })
+            setShortURLData(result.data)
+            setIsURLShortened(true)
+            localStorage.setItem("shortURLData",JSON.stringify(result.data))
+            console.log(result.data)
+        } catch (error) {
+            console.log(error)
+            toast({
+                title: "Error",
+                description: error.response.data.message || "There was an error processing your request",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "top",
+            });
+        }
     }
 
     function getReadyForReuse() {

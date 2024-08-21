@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Spinner, Box } from "@chakra-ui/react";
 
-const SERVER_ENDPOINT = 'http://localhost:4000'
+// const SERVER_ENDPOINT = 'http://localhost:4000'
 
 function HandleRedirect() {
     const [destination, setDestination] = useState(null);
@@ -11,16 +11,14 @@ function HandleRedirect() {
 
     const { shortId } = useParams();
 
-    console.log(shortId);
-    
     useEffect(() => {
         async function getData() {
             return axios
-                .get(`${SERVER_ENDPOINT}/api/url/${shortId}`)
+                .get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/url/${shortId}`)
                 .then((res) => setDestination(res.data.destination))
                 .catch((error) => {
                     console.log(error)
-                    setError(error.message);
+                    setError(error.response.data.message);
                 });
         }
         getData();

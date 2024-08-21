@@ -1,9 +1,10 @@
-import { Alert, AlertIcon, Box, Tabs, TabList, TabPanels, Tab, TabPanel, Stat, StatLabel, StatNumber, StatHelpText, Input, Button, Text, Stack, HStack, VStack } from '@chakra-ui/react'
+import { useToast, Alert, AlertIcon, Box, Tabs, TabList, TabPanels, Tab, TabPanel, Stat, StatLabel, StatNumber, StatHelpText, Input, Button, Text, Stack, HStack, VStack } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
 function ShortenedURLInfo({ shortURLData, onReuse }) {
+  const toast = useToast()
   //console.log(`${window.location.origin}/${shortURLData.shortId}`)
   const [activeTab, setActiveTab] = useState(0);
   const [analyticsData, setAnalyticsData] = useState(null);
@@ -13,7 +14,7 @@ function ShortenedURLInfo({ shortURLData, onReuse }) {
       // İkinci tab'a geçildiğinde analytics için request at
       async function fetchAnalytics() {
         try {
-          const response = await axios.get(`http://localhost:4000/api/url/analytics/${shortURLData.shortId}`);
+          const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/url/analytics/${shortURLData.shortId}`);
           setAnalyticsData(response.data);
           console.log(response)
           console.log(analyticsData)
@@ -28,16 +29,25 @@ function ShortenedURLInfo({ shortURLData, onReuse }) {
 
   async function fetchQrCode() {
     try {
-      const response = await axios.get(`http://localhost:4000/api/qr/${shortURLData.shortId}`, {
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/qr/12345`, {
         responseType: 'arraybuffer'
       });
       const blob = new Blob([response.data], {type: 'image/png'});
       saveAs(blob, shortURLData.shortId)
       console.log("QR Code fetched successfully:", response);
     } catch (error) {
-        console.log("Error fetching QR Code:", error.message);
+      const errorText = new TextDecoder().decode(error.response.data);
+      const errorJson = JSON.parse(errorText);
+      console.log("Error fetching QR Code:", errorJson.message);
+      toast({
+        title: "Error",
+        description: errorJson.message || "There was an error processing your request",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
     }
-    console.log("BISI OLDU");
   }
 
   return (
