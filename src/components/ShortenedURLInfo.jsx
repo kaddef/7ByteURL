@@ -5,19 +5,17 @@ import { saveAs } from 'file-saver';
 
 function ShortenedURLInfo({ shortURLData, onReuse }) {
   const toast = useToast()
-  //console.log(`${window.location.origin}/${shortURLData.shortId}`)
   const [activeTab, setActiveTab] = useState(0);
   const [analyticsData, setAnalyticsData] = useState(null);
 
   useEffect(() => {
     if (activeTab === 1 && shortURLData.shortId) {
-      // İkinci tab'a geçildiğinde analytics için request at
       async function fetchAnalytics() {
         try {
           const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/url/analytics/${shortURLData.shortId}`);
           setAnalyticsData(response.data);
-          console.log(response)
-          console.log(analyticsData)
+          // console.log(response)
+          // console.log(analyticsData)
         } catch (error) {
           console.error('Error fetching analytics data:', error);
         }
@@ -34,11 +32,11 @@ function ShortenedURLInfo({ shortURLData, onReuse }) {
       });
       const blob = new Blob([response.data], {type: 'image/png'});
       saveAs(blob, shortURLData.shortId)
-      console.log("QR Code fetched successfully:", response);
+      // console.log("QR Code fetched successfully:", response);
     } catch (error) {
       const errorText = new TextDecoder().decode(error.response.data);
       const errorJson = JSON.parse(errorText);
-      console.log("Error fetching QR Code:", errorJson.message);
+      // console.log("Error fetching QR Code:", errorJson.message);
       toast({
         title: "Error",
         description: errorJson.message || "There was an error processing your request",

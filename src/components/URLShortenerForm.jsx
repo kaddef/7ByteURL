@@ -19,9 +19,9 @@ function URLShortenerFrom () {
             setShortURLData(result.data)
             setIsURLShortened(true)
             localStorage.setItem("shortURLData",JSON.stringify(result.data))
-            console.log(result.data)
+            // console.log(result.data)
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             toast({
                 title: "Error",
                 description: error.response.data.message || "There was an error processing your request",
@@ -43,8 +43,7 @@ function URLShortenerFrom () {
     useEffect(() => {
         const localData = localStorage.getItem("shortURLData")
         if(localData) {
-            console.log("SHORtid var zaten")
-            console.log(JSON.parse(localData))
+            // console.log(JSON.parse(localData))
             setShortURLData(JSON.parse(localData))
             setIsURLShortened(true)
         }
