@@ -27,7 +27,7 @@ function ShortenedURLInfo({ shortURLData, onReuse }) {
 
   async function fetchQrCode() {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/qr/12345`, {
+      const response = await axios.get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/qr/${shortURLData.shortId}`, {
         responseType: 'arraybuffer'
       });
       const blob = new Blob([response.data], {type: 'image/png'});

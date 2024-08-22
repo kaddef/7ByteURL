@@ -11,11 +11,12 @@ function HandleRedirect() {
 
     useEffect(() => {
         async function getData() {
+            console.log("DATA REQ")
             return axios
                 .get(`${process.env.REACT_APP_SERVER_ENDPOINT}/api/url/${shortId}`)
                 .then((res) => setDestination(res.data.destination))
                 .catch((error) => {
-                    // console.log(error)
+                    console.log(error)
                     setError(error.response.data.message);
                 });
         }
